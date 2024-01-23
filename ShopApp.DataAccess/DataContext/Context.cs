@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using ShopApp.DataAccess.Concrete.EfCore;
 using ShopApp.Entities;
 using System;
@@ -13,6 +14,24 @@ namespace ShopApp.DataAccess.DataContext
     {
         public Context() { } // Parametresiz kurucu eklendi
         public Context(DbContextOptions<Context> options) : base(options) { }
+        public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Context>
+        {
+            public Context CreateDbContext(string[] args)
+            {
+                var builder = new DbContextOptionsBuilder<Context>();
+                var connectionString = "Data Source=DESKTOP-U5FQ7NA\\SQL2022;Initial Catalog=ShopApp;Persist Security Info=True;User ID=sa;Password=123;Trusted_Connection=True; TrustServerCertificate=Yes;";
+                builder.UseSqlServer(connectionString);
+                return new Context(builder.Options);
+            }
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-U5FQ7NA\\SQL2022;Initial Catalog=ShopApp;Persist Security Info=True;User ID=sa;Password=123;Trusted_Connection=True; TrustServerCertificate=Yes");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
